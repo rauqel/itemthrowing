@@ -56,11 +56,6 @@ public class PlayerMovement : MonoBehaviour
         // void calls
         MyInput();
         SpeedControl();
-
-        if (readyToJump)
-        {
-            Debug.Log("working");
-        }
     }
 
     private void FixedUpdate()
@@ -100,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
         // in air
         else if (!grounded)
         {
+            readyToJump = false;
             myRigidBody.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
         }
     }
@@ -128,6 +124,5 @@ public class PlayerMovement : MonoBehaviour
     {
         readyToJump = true;
     }
-
 
 }
