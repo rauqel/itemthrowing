@@ -8,6 +8,7 @@ public class ThrowingThings : MonoBehaviour
     public Transform cam;
     public Transform attackPoint;
     public GameObject objectToThrow;
+    public Rigidbody objectRb;
 
     [Header("Settings")]
     public int totalThrows;
@@ -20,24 +21,48 @@ public class ThrowingThings : MonoBehaviour
 
     bool readyToThrow;
 
+    [Header("HeldItem")]
     public GameObject heldItem;
+
+    [Header("Projectile Trajectory")]
+    [SerializeField]
+    private LineRenderer lineRenderer;
+
+    [Header("Display Controls")]
+    [SerializeField]
+    [Range(10, 100)]
+    private int linePoints = 25;
+    [Range(0.01f, 0.25f)]
+    private float timeBetweenPoints = 0.1f;
+
 
     private void Start()
     {
         readyToThrow = true;
+        objectRb = heldItem.GetComponent<Rigidbody>();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(throwKey) && readyToThrow && totalThrows > 0)
+        if(Input.GetKey(throwKey) && readyToThrow && totalThrows > 0)
+        {
+            DrawProjection();
+        }
+        if (Input.GetKeyUp(throwKey) && readyToThrow && totalThrows > 0)
         {
             Throw();
+        }
+        else
+        {
+            lineRenderer.enabled = false;
         }
 
         if(totalThrows == 0)
         {
             Destroy(heldItem);
         }
+
+        objectRb.mass = 10;
     }
 
     private void Throw()
@@ -50,8 +75,18 @@ public class ThrowingThings : MonoBehaviour
         // Get rigidbody component
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
 
+        // Calculate direction
+        Vector3 forceDirection = cam.transform.forward;
+
+        RaycastHit hit;
+
+        if(Physics.Raycast(cam.position, cam.forward, out hit, 500f))
+        {
+            forceDirection = (hit.point - attackPoint.position).normalized;
+        }
+
         // Add force
-        Vector3 forceToAdd = cam.transform.forward * throwForce + transform.up * throwUpwardForce;
+        Vector3 forceToAdd = forceDirection * throwForce + transform.up * throwUpwardForce;
 
         projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
 
@@ -64,5 +99,23 @@ public class ThrowingThings : MonoBehaviour
     private void ResetThrow()
     {
         readyToThrow = true;
+    }
+
+    private void DrawProjection()
+    {
+        lineRenderer.enabled = true;
+        lineRenderer.positionCount = Mathf.CeilToInt(linePoints / timeBetweenPoints) + 1;
+        Vector3 startPosition = attackPoint.position;
+        Vector3 startVelocity = throwForce * cam.transform.forward / objectRb.mass;
+        int i = 0;
+        lineRenderer.SetPosition(i, startPosition);
+        for(float time  = 0; time < linePoints; time += timeBetweenPoints)
+        {
+            i++;
+            Vector3 point = startPosition + time * startVelocity;
+            point.y = startPosition.y + startVelocity.y * time + (Physics.gravity.y / 2f * time * time);
+
+            lineRenderer.SetPosition(i, point);
+        }
     }
 }
