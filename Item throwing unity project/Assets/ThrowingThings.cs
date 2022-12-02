@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ThrowingThings : MonoBehaviour
 {
@@ -32,10 +33,17 @@ public class ThrowingThings : MonoBehaviour
     [SerializeField]
     [Range(10, 100)]
     private int linePoints = 25;
+    [SerializeField]
     [Range(0.01f, 0.25f)]
     private float timeBetweenPoints = 0.1f;
 
+    [Header("Text")]
+    public GameObject textDisplay;
 
+    private void TextToDisplay()
+    {
+        textDisplay.GetComponent<Text>().text = "Total items left: " + totalThrows;
+    }
     private void Start()
     {
         readyToThrow = true;
@@ -51,9 +59,6 @@ public class ThrowingThings : MonoBehaviour
         if (Input.GetKeyUp(throwKey) && readyToThrow && totalThrows > 0)
         {
             Throw();
-        }
-        else
-        {
             lineRenderer.enabled = false;
         }
 
@@ -62,7 +67,7 @@ public class ThrowingThings : MonoBehaviour
             Destroy(heldItem);
         }
 
-        objectRb.mass = 10;
+        TextToDisplay();
     }
 
     private void Throw()
@@ -80,10 +85,10 @@ public class ThrowingThings : MonoBehaviour
 
         RaycastHit hit;
 
-        if(Physics.Raycast(cam.position, cam.forward, out hit, 500f))
+        /*if(Physics.Raycast(cam.position, cam.forward, out hit, 500f))
         {
             forceDirection = (hit.point - attackPoint.position).normalized;
-        }
+        }*/
 
         // Add force
         Vector3 forceToAdd = forceDirection * throwForce + transform.up * throwUpwardForce;
@@ -105,8 +110,9 @@ public class ThrowingThings : MonoBehaviour
     {
         lineRenderer.enabled = true;
         lineRenderer.positionCount = Mathf.CeilToInt(linePoints / timeBetweenPoints) + 1;
+        //float TotalForce = throwForce + throwUpwardForce * 3.5f;
         Vector3 startPosition = attackPoint.position;
-        Vector3 startVelocity = throwForce * cam.transform.forward / objectRb.mass;
+        Vector3 startVelocity = throwForce * cam.transform.forward + throwUpwardForce * cam.transform.up / objectRb.mass * 1.1f;
         int i = 0;
         lineRenderer.SetPosition(i, startPosition);
         for(float time  = 0; time < linePoints; time += timeBetweenPoints)
@@ -116,6 +122,8 @@ public class ThrowingThings : MonoBehaviour
             point.y = startPosition.y + startVelocity.y * time + (Physics.gravity.y / 2f * time * time);
 
             lineRenderer.SetPosition(i, point);
+
+            Vector3 lastPosition = lineRenderer.GetPosition(i - 1) - attackPoint.position.normalized;
         }
     }
 }
