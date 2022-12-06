@@ -24,6 +24,7 @@ public class ThrowingThings : MonoBehaviour
 
     [Header("HeldItem")]
     public GameObject heldItem;
+    float destroyItem;
 
     [Header("Projectile Trajectory")]
     [SerializeField]
@@ -52,6 +53,7 @@ public class ThrowingThings : MonoBehaviour
     {
         readyToThrow = true;
         objectRb = heldItem.GetComponent<Rigidbody>();
+        matToggled = false;
     }
 
     private void Update()
@@ -92,7 +94,7 @@ public class ThrowingThings : MonoBehaviour
         // Calculate direction
         Vector3 forceDirection = cam.transform.forward;
 
-        RaycastHit hit;
+        //RaycastHit hit;
 
         /*if(Physics.Raycast(cam.position, cam.forward, out hit, 500f))
         {
@@ -108,6 +110,9 @@ public class ThrowingThings : MonoBehaviour
 
         //implement throwCoolDown;
         Invoke(nameof(ResetThrow), throwCooldown);
+
+        //destroy item after some time -> unfinished script..for now
+        destroyItem += Time.deltaTime;
     }
 
     private void ResetThrow()
@@ -138,16 +143,16 @@ public class ThrowingThings : MonoBehaviour
 
     private void MaterialVisible()
     {
+        matToggled = !matToggled;
+
         // change line renderer material visibility on toggle
         if (matToggled)
         {
-            matToggled = false;
             ChangeAlpha(attackPoint.GetComponent<LineRenderer>().material, 0.6f);
             Debug.Log("matVisible");
         }
         if (!matToggled)
         {
-            matToggled = true;
             ChangeAlpha(attackPoint.GetComponent<LineRenderer>().material, 0);
             Debug.Log("matInvisible");
         }
