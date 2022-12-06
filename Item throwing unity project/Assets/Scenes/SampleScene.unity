@@ -806,6 +806,7 @@ MonoBehaviour:
   throwUpwardForce: 3
   heldItem: {fileID: 528954421}
   lineRenderer: {fileID: 73203894}
+  lineMat: {fileID: 2100000, guid: 3df7d3698dddce54186a144887e0ce08, type: 2}
   linePoints: 59
   timeBetweenPoints: 0.128
   textDisplay: {fileID: 1469693614}

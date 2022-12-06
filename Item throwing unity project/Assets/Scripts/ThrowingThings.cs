@@ -29,6 +29,10 @@ public class ThrowingThings : MonoBehaviour
     [SerializeField]
     private LineRenderer lineRenderer;
 
+    public Material lineMat;
+    KeyCode toggleMat = KeyCode.G;
+    bool matToggled;
+
     [Header("Display Controls")]
     [SerializeField]
     [Range(10, 100)]
@@ -65,6 +69,11 @@ public class ThrowingThings : MonoBehaviour
         if(totalThrows == 0)
         {
             Destroy(heldItem);
+        }
+
+        if (Input.GetKeyDown(toggleMat))
+        {
+            MaterialVisible();
         }
 
         TextToDisplay();
@@ -125,5 +134,29 @@ public class ThrowingThings : MonoBehaviour
 
             Vector3 lastPosition = lineRenderer.GetPosition(i - 1) - attackPoint.position.normalized;
         }
+    }
+
+    private void MaterialVisible()
+    {
+        // change line renderer material visibility on toggle
+        if (matToggled)
+        {
+            matToggled = false;
+            ChangeAlpha(attackPoint.GetComponent<LineRenderer>().material, 0.6f);
+            Debug.Log("matVisible");
+        }
+        if (!matToggled)
+        {
+            matToggled = true;
+            ChangeAlpha(attackPoint.GetComponent<LineRenderer>().material, 0);
+            Debug.Log("matInvisible");
+        }
+    }
+
+    void ChangeAlpha(Material mat, float alphaVal)
+    {
+        Color oldColor = mat.color;
+        Color newColor = new Color(oldColor.r, oldColor.g, oldColor.b, alphaVal);
+        mat.SetColor("_Color", newColor);
     }
 }
