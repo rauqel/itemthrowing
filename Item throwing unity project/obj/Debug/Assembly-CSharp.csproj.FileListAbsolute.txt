@@ -1,0 +1,2 @@
+C:\Users\ralfonso2021\Documents\GitHub\itemthrowing\Item throwing unity project\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+C:\Users\ralfonso2021\Documents\GitHub\itemthrowing\Item throwing unity project\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
