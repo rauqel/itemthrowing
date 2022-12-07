@@ -25,23 +25,15 @@ public class SelectionManager : MonoBehaviour
         if(Physics.Raycast(ray, out hit))
         {
             var selection = hit.transform;
-           // var selectionRenderer = selection.GetComponent<Renderer>();
-            if(hit.transform.CompareTag("Snowball") || hit.transform.CompareTag("Throwing Knife"))
+            var selectionRenderer = selection.GetComponent<Renderer>();
+            if(hit.transform.CompareTag("Snowball") || hit.transform.CompareTag("Throwing Knife") && selectionRenderer != null)
             {
                 Debug.Log(hit.transform.gameObject.name);
-                if(!itemsEquipped)
-                {
-                    pickUpPrompt.enabled = true;
-                }
-                else
-                {
-                    pickUpPrompt.enabled = false;
-                }
-
-                if (Input.GetKeyDown(pickUp))
-                {
-                    itemsEquipped = true;
-                }
+                pickUpPrompt.enabled = true;
+            }
+            else
+            {
+                pickUpPrompt.enabled = false;
             }
         }
     }
