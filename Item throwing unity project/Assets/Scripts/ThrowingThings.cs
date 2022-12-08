@@ -23,7 +23,9 @@ public class ThrowingThings : MonoBehaviour
     bool readyToThrow;
 
     [Header("HeldItem")]
-    public GameObject heldItem;
+    public GameObject sbHeldItem;
+    public GameObject tkHeldItem;
+    GameObject heldItem;
     float destroyItem;
 
     [Header("Projectile Trajectory")]
@@ -58,7 +60,23 @@ public class ThrowingThings : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKey(throwKey) && readyToThrow && totalThrows > 0)
+        MeshRenderer knifeMR = tkHeldItem.GetComponent<MeshRenderer>();
+        MeshRenderer snowballMR = sbHeldItem.GetComponent<MeshRenderer>();
+        heldItem = tkHeldItem;
+
+        if(heldItem == sbHeldItem)
+        {
+            knifeMR.enabled = false;
+            snowballMR.enabled = true;
+        }
+        if (heldItem == tkHeldItem)
+        {
+            snowballMR.enabled = false;
+            knifeMR.enabled = true;
+        }
+        Debug.Log(heldItem.name);
+
+        if (Input.GetKey(throwKey) && readyToThrow && totalThrows > 0)
         {
             DrawProjection();
         }
