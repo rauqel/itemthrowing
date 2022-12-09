@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SelectionManager : MonoBehaviour
 {
     public Text pickUpPrompt;
-    bool itemsEquipped;
+    public ThrowingThings throwScript;
 
     KeyCode pickUp = KeyCode.Mouse1;
 
@@ -14,7 +14,6 @@ public class SelectionManager : MonoBehaviour
     void Start()
     {
         pickUpPrompt.enabled = false;
-        itemsEquipped = false;
     }
 
     // Update is called once per frame
@@ -28,12 +27,22 @@ public class SelectionManager : MonoBehaviour
             var selectionRenderer = selection.GetComponent<Renderer>();
             if(hit.transform.CompareTag("Snowball") || hit.transform.CompareTag("Throwing Knife") && selectionRenderer != null)
             {
-                Debug.Log(hit.transform.gameObject.name);
                 pickUpPrompt.enabled = true;
             }
             else
             {
                 pickUpPrompt.enabled = false;
+            }
+
+            if(hit.transform.CompareTag("Snowball") && Input.GetKeyDown(pickUp))
+            {
+                throwScript.heldItem = throwScript.sbHeldItem;
+                Debug.Log(throwScript.heldItem.name);
+            }
+            if (hit.transform.CompareTag("Throwing Knife") && Input.GetKeyDown(pickUp))
+            {
+                throwScript.heldItem = throwScript.tkHeldItem;
+                Debug.Log(throwScript.heldItem.name);
             }
         }
     }

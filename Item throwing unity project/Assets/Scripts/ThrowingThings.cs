@@ -25,8 +25,12 @@ public class ThrowingThings : MonoBehaviour
     [Header("HeldItem")]
     public GameObject sbHeldItem;
     public GameObject tkHeldItem;
-    GameObject heldItem;
+    public GameObject heldItem;
     float destroyItem;
+
+    [Header("Object To Throw")]
+    public GameObject sbThrowItem;
+    public GameObject tkThrowItem;
 
     [Header("Projectile Trajectory")]
     [SerializeField]
@@ -53,28 +57,38 @@ public class ThrowingThings : MonoBehaviour
     }
     private void Start()
     {
-        readyToThrow = true;
+        readyToThrow = false;
         objectRb = heldItem.GetComponent<Rigidbody>();
         matToggled = false;
+        heldItem = null;
+        objectToThrow = null;
     }
 
     private void Update()
     {
         MeshRenderer knifeMR = tkHeldItem.GetComponent<MeshRenderer>();
         MeshRenderer snowballMR = sbHeldItem.GetComponent<MeshRenderer>();
-        heldItem = tkHeldItem;
 
+        if(heldItem == null)
+        {
+            readyToThrow = false;
+            knifeMR.enabled = false;
+            snowballMR.enabled = false;
+        }
         if(heldItem == sbHeldItem)
         {
             knifeMR.enabled = false;
             snowballMR.enabled = true;
+            objectToThrow = sbThrowItem;
+            readyToThrow = true;
         }
         if (heldItem == tkHeldItem)
         {
             snowballMR.enabled = false;
             knifeMR.enabled = true;
+            objectToThrow = tkHeldItem;
+            readyToThrow = true;
         }
-        Debug.Log(heldItem.name);
 
         if (Input.GetKey(throwKey) && readyToThrow && totalThrows > 0)
         {
@@ -125,6 +139,16 @@ public class ThrowingThings : MonoBehaviour
         projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
 
         totalThrows--;
+
+        // throw script is more-so accustomed to snowball physics so this works around that
+        // and applies the appropriate forces necessary for a throwing knife
+        // not efficient scripting but it's a workaround given the short amount of time i would have
+        // to fix the script
+        if (heldItem == tkHeldItem)
+        {
+            throwForce *= 5.5f;
+            throwUpwardForce /= 3;
+        }
 
         //implement throwCoolDown;
         Invoke(nameof(ResetThrow), throwCooldown);
