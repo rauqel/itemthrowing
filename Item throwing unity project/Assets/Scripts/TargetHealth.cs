@@ -1,25 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TargetHealth : MonoBehaviour
 {
-    public int maxHealth;
-    public int currentHealth;
+    [Header("Stats")]
+    public int health;
+    int maxHealth;
+    public Slider healthBar;
 
-    [SerializeField]
-    GameObject[] targets;
+    [Header("References")]
+    public KnifeStickScript tkDamageScript;
+    public KnifeStickScript sbDamageScript;
 
-    void Start()
+    private void Start()
     {
-        currentHealth = maxHealth;
+        healthBar.gameObject.SetActive(false);
+        maxHealth = health;
     }
-
-    void Update()
+    public void TakeDamage(int damage)
     {
-        if(currentHealth <= 0)
+        health -= damage;
+
+        if(health <= 0)
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Update()
+    {
+        healthBar.value = health;
+
+        if(health < maxHealth)
+        {
+            healthBar.gameObject.SetActive(true);
+        }
+       
     }
 }

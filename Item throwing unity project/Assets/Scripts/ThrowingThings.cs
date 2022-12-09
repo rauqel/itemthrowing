@@ -34,6 +34,10 @@ public class ThrowingThings : MonoBehaviour
     public GameObject sbThrowItem;
     public GameObject tkThrowItem;
 
+    [Header("TableItems")]
+    public GameObject tkIdle;
+    public GameObject sbIdle;
+
     [Header("Projectile Trajectory")]
     [SerializeField]
     private LineRenderer lineRenderer;
@@ -68,9 +72,11 @@ public class ThrowingThings : MonoBehaviour
     private void Update()
     {
         MeshRenderer knifeMR = tkHeldItem.GetComponent<MeshRenderer>();
+        MeshRenderer tkIdleMesh = tkIdle.GetComponent<MeshRenderer>();
         MeshRenderer snowballMR = sbHeldItem.GetComponent<MeshRenderer>();
+        MeshRenderer sbIdleMesh = sbIdle.GetComponent<MeshRenderer>();
 
-        if(!selectionScript.tkEquipped && !selectionScript.sbEquipped)
+        if (!selectionScript.tkEquipped && !selectionScript.sbEquipped)
         {
             readyToThrow = false;
             knifeMR.enabled = false;
@@ -86,6 +92,12 @@ public class ThrowingThings : MonoBehaviour
             heldItem = sbHeldItem;
 
             objectRb = sbThrowItem.GetComponent<Rigidbody>();
+
+            throwForce = 18;
+            throwUpwardForce = 3;
+
+            sbIdleMesh.enabled = false;
+            tkIdleMesh.enabled = true;
         }
         if (selectionScript.tkEquipped)
         {
@@ -101,6 +113,8 @@ public class ThrowingThings : MonoBehaviour
             throwForce = 45;
             throwUpwardForce = 0;
 
+            tkIdleMesh.enabled = false;
+            sbIdleMesh.enabled = true;
         }
 
         if (Input.GetKey(throwKey) && readyToThrow && totalThrows > 0)
@@ -138,13 +152,12 @@ public class ThrowingThings : MonoBehaviour
 
         // Calculate direction
         Vector3 forceDirection = cam.transform.forward;
-
-        //RaycastHit hit;
-
-        /*if(Physics.Raycast(cam.position, cam.forward, out hit, 500f))
+        RaycastHit hit;
+        if (Physics.Raycast(cam.position, cam.forward, out hit, 500f) && !matToggled)
         {
+            Debug.Log("yass");
             forceDirection = (hit.point - attackPoint.position).normalized;
-        }*/
+        }
 
         // Add force
         Vector3 forceToAdd = forceDirection * throwForce + transform.up * throwUpwardForce;
