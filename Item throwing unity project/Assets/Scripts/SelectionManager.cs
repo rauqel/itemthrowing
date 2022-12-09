@@ -8,6 +8,9 @@ public class SelectionManager : MonoBehaviour
     public Text pickUpPrompt;
     public ThrowingThings throwScript;
 
+    public bool sbEquipped;
+    public bool tkEquipped;
+
     KeyCode pickUp = KeyCode.Mouse1;
 
     // Start is called before the first frame update
@@ -36,13 +39,15 @@ public class SelectionManager : MonoBehaviour
 
             if(hit.transform.CompareTag("Snowball") && Input.GetKeyDown(pickUp))
             {
-                throwScript.heldItem = throwScript.sbHeldItem;
-                Debug.Log(throwScript.heldItem.name);
+                //throwScript.heldItem = throwScript.sbHeldItem;
+                sbEquipped = true;
+                tkEquipped = false;
             }
             if (hit.transform.CompareTag("Throwing Knife") && Input.GetKeyDown(pickUp))
             {
-                throwScript.heldItem = throwScript.tkHeldItem;
-                Debug.Log(throwScript.heldItem.name);
+                //throwScript.heldItem = throwScript.tkHeldItem;
+                tkEquipped = true;
+                sbEquipped = false;
             }
         }
     }

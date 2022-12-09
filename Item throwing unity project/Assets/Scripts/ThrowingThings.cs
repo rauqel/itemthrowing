@@ -11,6 +11,8 @@ public class ThrowingThings : MonoBehaviour
     public GameObject objectToThrow;
     public Rigidbody objectRb;
 
+    public SelectionManager selectionScript;
+
     [Header("Settings")]
     public int totalThrows;
     public float throwCooldown;
@@ -58,7 +60,6 @@ public class ThrowingThings : MonoBehaviour
     private void Start()
     {
         readyToThrow = false;
-        objectRb = heldItem.GetComponent<Rigidbody>();
         matToggled = false;
         heldItem = null;
         objectToThrow = null;
@@ -69,25 +70,36 @@ public class ThrowingThings : MonoBehaviour
         MeshRenderer knifeMR = tkHeldItem.GetComponent<MeshRenderer>();
         MeshRenderer snowballMR = sbHeldItem.GetComponent<MeshRenderer>();
 
-        if(heldItem == null)
+        if(!selectionScript.tkEquipped && !selectionScript.sbEquipped)
         {
             readyToThrow = false;
             knifeMR.enabled = false;
             snowballMR.enabled = false;
         }
-        if(heldItem == sbHeldItem)
+        if(selectionScript.sbEquipped)
         {
             knifeMR.enabled = false;
             snowballMR.enabled = true;
             objectToThrow = sbThrowItem;
             readyToThrow = true;
+
+            heldItem = sbHeldItem;
+
+            objectRb = sbThrowItem.GetComponent<Rigidbody>();
         }
-        if (heldItem == tkHeldItem)
+        if (selectionScript.tkEquipped)
         {
             snowballMR.enabled = false;
             knifeMR.enabled = true;
-            objectToThrow = tkHeldItem;
+            objectToThrow = tkThrowItem;
             readyToThrow = true;
+
+            heldItem = tkHeldItem;
+
+            objectRb = tkThrowItem.GetComponent<Rigidbody>();
+
+            throwForce = 55;
+            throwUpwardForce *= 0;
         }
 
         if (Input.GetKey(throwKey) && readyToThrow && totalThrows > 0)
@@ -139,16 +151,6 @@ public class ThrowingThings : MonoBehaviour
         projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
 
         totalThrows--;
-
-        // throw script is more-so accustomed to snowball physics so this works around that
-        // and applies the appropriate forces necessary for a throwing knife
-        // not efficient scripting but it's a workaround given the short amount of time i would have
-        // to fix the script
-        if (heldItem == tkHeldItem)
-        {
-            throwForce *= 5.5f;
-            throwUpwardForce /= 3;
-        }
 
         //implement throwCoolDown;
         Invoke(nameof(ResetThrow), throwCooldown);
