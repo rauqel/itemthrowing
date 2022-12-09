@@ -98,8 +98,9 @@ public class ThrowingThings : MonoBehaviour
 
             objectRb = tkThrowItem.GetComponent<Rigidbody>();
 
-            throwForce = 55;
-            throwUpwardForce *= 0;
+            throwForce = 45;
+            throwUpwardForce = 0;
+
         }
 
         if (Input.GetKey(throwKey) && readyToThrow && totalThrows > 0)
